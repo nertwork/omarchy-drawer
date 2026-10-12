@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "jfarr.drawer",
+  "id": "nertwork.drawer",
   "name": "Bar Drawer",
   "version": "1.0.0",
   "author": "jfarr",
@@ -27,7 +27,7 @@
     "defaults": {
       "items": [
         "omarchy.tailscale",
-        "jfarr.agents",
+        "nertwork.agents",
         "omarchy.bluetooth",
         "omarchy.network",
         "omarchy.microphone"

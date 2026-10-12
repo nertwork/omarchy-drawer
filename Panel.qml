@@ -6,12 +6,12 @@ import qs.Ui
 
 BarWidget {
   id: root
-  moduleName: "jfarr.drawer"
+  moduleName: "nertwork.drawer"
 
   // Settings & Configuration
   readonly property var defaultItems: [
     "omarchy.tailscale",
-    "jfarr.agents",
+    "nertwork.agents",
     "omarchy.bluetooth",
     "omarchy.network",
     "omarchy.microphone"
@@ -121,7 +121,7 @@ BarWidget {
   }
 
   IpcHandler {
-    target: "jfarr.drawer"
+    target: "nertwork.drawer"
 
     function toggle(): string {
       root.broadcast("toggleLocal")

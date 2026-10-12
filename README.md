@@ -54,36 +54,36 @@ omarchy plugin add https://github.com/nertwork/omarchy-drawer.git --enable
 Clone directly into your Omarchy plugins directory:
 
 ```bash
-git clone https://github.com/nertwork/omarchy-drawer.git ~/.config/omarchy/plugins/jfarr.drawer
+git clone https://github.com/nertwork/omarchy-drawer.git ~/.config/omarchy/plugins/nertwork.drawer
 ```
 
 ### Updating
 
 ```bash
-omarchy plugin update jfarr.drawer
+omarchy plugin update nertwork.drawer
 ```
 
 ### Removal
 
 ```bash
-omarchy plugin remove jfarr.drawer
+omarchy plugin remove nertwork.drawer
 ```
 
 ---
 
 ## Configuration Reference
 
-Add `jfarr.drawer` to `bar.layout.right`, `bar.layout.left`, or `bar.layout.center` in `~/.config/omarchy/shell.json`:
+Add `nertwork.drawer` to `bar.layout.right`, `bar.layout.left`, or `bar.layout.center` in `~/.config/omarchy/shell.json`:
 
 ```json
 {
-  "id": "jfarr.drawer",
+  "id": "nertwork.drawer",
   "defaultExpanded": false,
   "chevronPosition": "left",
   "animationDuration": 350,
   "items": [
     "omarchy.tailscale",
-    "jfarr.agents",
+    "nertwork.agents",
     "omarchy.bluetooth",
     "omarchy.network",
     "omarchy.microphone"
@@ -95,7 +95,7 @@ Add `jfarr.drawer` to `bar.layout.right`, `bar.layout.left`, or `bar.layout.cent
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `items` | `Array<string \| object>` | `["omarchy.tailscale", "jfarr.agents", "omarchy.bluetooth", "omarchy.network", "omarchy.microphone"]` | List of widget IDs or widget definition objects to nest inside the drawer. |
+| `items` | `Array<string \| object>` | `["omarchy.tailscale", "nertwork.agents", "omarchy.bluetooth", "omarchy.network", "omarchy.microphone"]` | List of widget IDs or widget definition objects to nest inside the drawer. |
 | `defaultExpanded` | `boolean` | `false` | Whether the drawer starts in the expanded state when Omarchy Shell loads. |
 | `chevronPosition` | `string` | `"left"` | Position of the expansion chevron relative to the contained widgets: `"left"` or `"right"`. |
 | `animationDuration` | `number` | `350` | Duration of the expand/collapse reveal animation in milliseconds (50ms – 2000ms). |
@@ -104,22 +104,22 @@ Add `jfarr.drawer` to `bar.layout.right`, `bar.layout.left`, or `bar.layout.cent
 
 ## IPC Interface Reference
 
-Bar Drawer exposes a full Quickshell IPC interface under the target `jfarr.drawer`. You can invoke actions from terminal scripts, shell hooks, or window manager shortcuts.
+Bar Drawer exposes a full Quickshell IPC interface under the target `nertwork.drawer`. You can invoke actions from terminal scripts, shell hooks, or window manager shortcuts.
 
 ### Quickshell IPC Commands
 
 ```bash
 # Toggle drawer expansion state
-quickshell ipc -p /usr/share/omarchy/shell call jfarr.drawer toggle
+quickshell ipc -p /usr/share/omarchy/shell call nertwork.drawer toggle
 
 # Expand drawer
-quickshell ipc -p /usr/share/omarchy/shell call jfarr.drawer expand
+quickshell ipc -p /usr/share/omarchy/shell call nertwork.drawer expand
 
 # Collapse drawer
-quickshell ipc -p /usr/share/omarchy/shell call jfarr.drawer collapse
+quickshell ipc -p /usr/share/omarchy/shell call nertwork.drawer collapse
 
 # Query detailed JSON status (dimensions, loaded widgets, visibility)
-quickshell ipc -p /usr/share/omarchy/shell call jfarr.drawer status
+quickshell ipc -p /usr/share/omarchy/shell call nertwork.drawer status
 ```
 
 ### Hyprland Keybinding Example
@@ -127,7 +127,7 @@ quickshell ipc -p /usr/share/omarchy/shell call jfarr.drawer status
 Add a shortcut to `~/.config/hypr/hyprland.conf` to toggle the drawer with your keyboard:
 
 ```ini
-bind = $mainMod, D, exec, quickshell ipc -p /usr/share/omarchy/shell call jfarr.drawer toggle
+bind = $mainMod, D, exec, quickshell ipc -p /usr/share/omarchy/shell call nertwork.drawer toggle
 ```
 
 ---
