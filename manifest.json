@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "jfarr.drawer",
+  "name": "Bar Drawer",
+  "version": "1.0.0",
+  "author": "jfarr",
+  "license": "MIT",
+  "description": "Foldable drawer container for Omarchy status bar widgets with smooth expand/collapse animations.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "activation": "on-demand",
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Bar Drawer",
+    "description": "Foldable drawer container for Omarchy status bar widgets",
+    "category": "Appearance",
+    "aliases": [
+      "drawer",
+      "foldable-drawer",
+      "container"
+    ],
+    "defaultSection": "right",
+    "allowMultiple": true,
+    "defaults": {
+      "items": [
+        "omarchy.tailscale",
+        "jfarr.agents",
+        "omarchy.bluetooth",
+        "omarchy.network",
+        "omarchy.microphone"
+      ],
+      "defaultExpanded": false,
+      "chevronPosition": "left",
+      "animationDuration": 350
+    }
+  }
+}
