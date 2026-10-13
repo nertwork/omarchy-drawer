@@ -3,7 +3,7 @@
   "id": "nertwork.drawer",
   "name": "Bar Drawer",
   "version": "1.0.0",
-  "author": "jfarr",
+  "author": "nertwork",
   "license": "MIT",
   "description": "Foldable drawer container for Omarchy status bar widgets with smooth expand/collapse animations.",
   "kinds": [
@@ -36,5 +36,6 @@
       "chevronPosition": "left",
       "animationDuration": 350
     }
-  }
+  },
+  "repository": "https://github.com/nertwork/omarchy-drawer"
 }

@@ -40,12 +40,6 @@ A polished, native Omarchy status bar container widget that neatly folds seconda
 Install directly via the Omarchy plugin CLI:
 
 ```bash
-omarchy plugin add git@github.com:nertwork/omarchy-drawer.git --enable
-```
-
-Or via HTTPS:
-
-```bash
 omarchy plugin add https://github.com/nertwork/omarchy-drawer.git --enable
 ```
 
