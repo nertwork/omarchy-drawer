@@ -17,7 +17,8 @@ BarWidget {
     "omarchy.microphone"
   ]
   readonly property var configuredItems: {
-    var list = setting("items", null)
+    var s = root.settings
+    var list = s && s.items ? s.items : setting("items", null)
     if (list instanceof Array && list.length > 0) return list
     return defaultItems
   }
@@ -429,6 +430,7 @@ BarWidget {
     onModuleSettingsChanged: injectProps()
 
     function injectProps() {
+      if (typeof root === "undefined" || !root) return
       var target = activeItem
       if (!target) return
       if ("bar" in target) target.bar = root.bar
