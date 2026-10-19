@@ -43,14 +43,6 @@ Install directly via the Omarchy plugin CLI:
 omarchy plugin add https://github.com/nertwork/omarchy-drawer.git --enable
 ```
 
-### Manual Installation
-
-Clone directly into your Omarchy plugins directory:
-
-```bash
-git clone https://github.com/nertwork/omarchy-drawer.git ~/.config/omarchy/plugins/nertwork.drawer
-```
-
 ### Updating
 
 ```bash
@@ -62,6 +54,12 @@ omarchy plugin update nertwork.drawer
 ```bash
 omarchy plugin remove nertwork.drawer
 ```
+
+---
+
+## Dependencies
+
+- **Omarchy Desktop / Omarchy Shell (`>=4.0.0`)**: Required Quickshell plugin host runtime. Pure QML implementation with zero external scripts or third-party dependencies.
 
 ---
 
