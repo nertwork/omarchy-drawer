@@ -2,11 +2,51 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 BarWidget {
   id: root
   moduleName: "nertwork.drawer"
+
+  // Resolve underlying Bar instance when root.bar is a scoped PluginBarApi facade
+  property var resolvedBar: null
+  readonly property var hostBar: (root.bar && root.bar.barWidgetRegistry) ? root.bar : (resolvedBar || root.bar)
+
+  function tryResolveHostBar() {
+    if (root.bar && root.bar.barWidgetRegistry) {
+      if (resolvedBar !== root.bar) resolvedBar = root.bar
+      return true
+    }
+    for (var p = root.parent; p; p = p.parent) {
+      var hosts = (p.pool && p.pool.hosts) ? p.pool.hosts : (p.hosts ? p.hosts : null)
+      if (hosts) {
+        for (var k in hosts) {
+          var h = hosts[k]
+          if (h && h.activeItem && h.activeItem.bar && h.activeItem.bar.barWidgetRegistry) {
+            if (resolvedBar !== h.activeItem.bar) resolvedBar = h.activeItem.bar
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+
+  Timer {
+    id: hostBarResolveTimer
+    interval: 50
+    repeat: true
+    running: !(root.hostBar && root.hostBar.barWidgetRegistry)
+    onTriggered: root.tryResolveHostBar()
+  }
+
+  onBarChanged: tryResolveHostBar()
+  onParentChanged: tryResolveHostBar()
+  Component.onCompleted: {
+    tryResolveHostBar()
+    Qt.callLater(tryResolveHostBar)
+  }
 
   // Settings & Configuration
   readonly property var defaultItems: [
@@ -98,11 +138,11 @@ BarWidget {
 
   // Auto-expand when a nested child popout opens
   Connections {
-    target: root.bar
+    target: root.hostBar
     ignoreUnknownSignals: true
 
     function onActivePopoutChanged() {
-      if (root.bar && root.bar.activePopout && root.isChildItem(root.bar.activePopout)) {
+      if (root.hostBar && root.hostBar.activePopout && root.isChildItem(root.hostBar.activePopout)) {
         if (!root.expanded) {
           root.expandLocal()
         }
@@ -113,9 +153,9 @@ BarWidget {
   // Close child popouts when drawer collapses
   onExpandedChanged: {
     if (!expanded) {
-      if (root.bar && root.bar.activePopout && root.isChildItem(root.bar.activePopout)) {
-        if (typeof root.bar.activePopout.close === "function") {
-          root.bar.activePopout.close()
+      if (root.hostBar && root.hostBar.activePopout && root.isChildItem(root.hostBar.activePopout)) {
+        if (typeof root.hostBar.activePopout.close === "function") {
+          root.hostBar.activePopout.close()
         }
       }
     }
@@ -175,9 +215,10 @@ BarWidget {
         width: root.width,
         visible: root.visible,
         hasBar: root.bar !== null,
-        hasRegistry: !!(root.bar && root.bar.barWidgetRegistry),
-        registryWidgetsCount: (root.bar && root.bar.barWidgetRegistry && root.bar.barWidgetRegistry.widgets)
-          ? Object.keys(root.bar.barWidgetRegistry.widgets).length : 0,
+        hasHostBar: root.hostBar !== null,
+        hasRegistry: !!(root.hostBar && root.hostBar.barWidgetRegistry),
+        registryWidgetsCount: (root.hostBar && root.hostBar.barWidgetRegistry && root.hostBar.barWidgetRegistry.widgets)
+          ? Object.keys(root.hostBar.barWidgetRegistry.widgets).length : 0,
         layoutLoaderItem: layoutLoader.item !== null,
         repeaterCount: repeater ? repeater.count : -1,
         items: itemsDebug
@@ -217,7 +258,7 @@ BarWidget {
 
       BarIconButton {
         id: toggleButton
-        bar: root.bar
+        bar: root.hostBar
         x: root.chevronOnLeft ? 0 : clipContainer.width
         anchors.verticalCenter: parent.verticalCenter
         text: root.chevronIcon
@@ -239,6 +280,7 @@ BarWidget {
         height: root.barSize
         clip: true
         opacity: root.revealProgress
+        enabled: root.revealExtent > 0
 
         Row {
           id: contentRow
@@ -286,7 +328,7 @@ BarWidget {
 
       BarIconButton {
         id: toggleButton
-        bar: root.bar
+        bar: root.hostBar
         y: root.chevronOnLeft ? 0 : clipContainer.height
         anchors.horizontalCenter: parent.horizontalCenter
         text: root.chevronIcon
@@ -309,6 +351,7 @@ BarWidget {
         height: root.revealExtent
         clip: true
         opacity: root.revealProgress
+        enabled: root.revealExtent > 0
 
         Column {
           id: contentCol
@@ -335,15 +378,17 @@ BarWidget {
 
     required property var entry
     property string region: "right"
-    readonly property string moduleName: root.bar && typeof root.bar.entryId === "function"
-      ? root.bar.entryId(entry)
+    readonly property real widgetWidth: 0
+    readonly property real widgetHeight: 0
+    readonly property string moduleName: root.hostBar && typeof root.hostBar.entryId === "function"
+      ? root.hostBar.entryId(entry)
       : (typeof entry === "string" ? entry : (entry && entry.id ? entry.id : ""))
-    readonly property var moduleSettings: root.bar && typeof root.bar.entrySettings === "function"
-      ? root.bar.entrySettings(entry)
+    readonly property var moduleSettings: root.hostBar && typeof root.hostBar.entrySettings === "function"
+      ? root.hostBar.entrySettings(entry)
       : (typeof entry === "object" ? entry : ({}))
     readonly property var registryComponent: {
-      if (!root.bar || !root.bar.barWidgetRegistry) return null
-      var w = root.bar.barWidgetRegistry.widgets
+      if (!root.hostBar || !root.hostBar.barWidgetRegistry) return null
+      var w = root.hostBar.barWidgetRegistry.widgets
       var registryName = Util.canonicalWidgetId(moduleName)
       return w[registryName] ? w[registryName].component : null
     }
@@ -351,7 +396,7 @@ BarWidget {
     readonly property var activeItem: loader.item
     readonly property int loaderStatus: loader.status
     readonly property string loaderError: loader.status === Loader.Error && typeof loader.errorString === "function" ? loader.errorString() : ""
-    readonly property bool panelOpen: root.bar && root.bar.activePopout === activeItem
+    readonly property bool panelOpen: root.hostBar && root.hostBar.activePopout === activeItem
 
     readonly property real panelIndicatorExtent: {
       var key = root.vertical ? "openPanelIndicatorHeight" : "openPanelIndicatorWidth"
@@ -373,21 +418,25 @@ BarWidget {
     height: implicitHeight
 
     function syncModuleSlot() {
-      if (root.bar && typeof root.bar.registerModuleSlot === "function") {
-        root.bar.registerModuleSlot(slotRoot)
+      if (root.hostBar && typeof root.hostBar.registerModuleSlot === "function") {
+        root.hostBar.registerModuleSlot(slotRoot)
       }
     }
 
     Component.onCompleted: syncModuleSlot()
     Component.onDestruction: {
-      if (root.bar && typeof root.bar.unregisterModuleSlot === "function") {
-        root.bar.unregisterModuleSlot(slotRoot)
+      if (root.hostBar && typeof root.hostBar.unregisterModuleSlot === "function") {
+        root.hostBar.unregisterModuleSlot(slotRoot)
       }
     }
 
     Connections {
       target: root
       function onBarChanged() {
+        slotRoot.syncModuleSlot()
+        slotRoot.injectProps()
+      }
+      function onHostBarChanged() {
         slotRoot.syncModuleSlot()
         slotRoot.injectProps()
       }
@@ -409,16 +458,16 @@ BarWidget {
       readonly property int inset: Style.space(2)
       visible: opacity > 0
       opacity: slotRoot.panelOpen ? 0.9 : 0
-      color: Color.accent
+      color: Commons.Color.accent
       radius: Math.min(width, height) / 2
       width: root.vertical ? Style.space(2) : slotRoot.panelIndicatorExtent
       height: root.vertical ? slotRoot.panelIndicatorExtent : Style.space(2)
       x: root.vertical
-        ? (root.bar && root.bar.position === "left" ? parent.width - width - inset : inset)
+        ? (root.hostBar && root.hostBar.position === "left" ? parent.width - width - inset : inset)
         : Math.round((parent.width - width) / 2)
       y: root.vertical
         ? Math.round((parent.height - height) / 2)
-        : (root.bar && root.bar.position === "top" ? parent.height - height - inset : inset)
+        : (root.hostBar && root.hostBar.position === "top" ? parent.height - height - inset : inset)
       z: 50
 
       Behavior on opacity {
@@ -433,7 +482,8 @@ BarWidget {
       if (typeof root === "undefined" || !root) return
       var target = activeItem
       if (!target) return
-      if ("bar" in target) target.bar = root.bar
+      if ("fixedEdge" in target && "fixedEdge" in root) target.fixedEdge = root.fixedEdge
+      if ("bar" in target) target.bar = root.hostBar
       if ("moduleName" in target) target.moduleName = moduleName
       if ("settings" in target) target.settings = moduleSettings
     }
