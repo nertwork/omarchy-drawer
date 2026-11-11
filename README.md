@@ -133,6 +133,20 @@ bind = $mainMod, D, exec, quickshell ipc -p /usr/share/omarchy/shell call nertwo
 
 ---
 
+---
+
+## Related Omarchy Apps & Plugins by [`@nertwork`](https://github.com/nertwork)
+
+| Project | Package / Plugin ID | Description |
+| :--- | :--- | :--- |
+| **[`nertwork/imsg`](https://github.com/nertwork/imsg)** | [`aur/imsg`](https://aur.archlinux.org/packages/imsg) (`yay -S imsg`) | **Native C++20 & Qt6/QML iMessage, SMS & RCS Desktop & CLI Client** for Omarchy & Hyprland — live `~/.config/omarchy/current/theme/colors.toml` theme sync, Omarchy Do Not Disturb integration, Socket.IO v4 push, HEIC/AVIF decoding, tapback reactions, and 2-tier split-window responsive UI. |
+| **[`nertwork/omarchy-ai-agents`](https://github.com/nertwork/omarchy-ai-agents)** | `nertwork.agents` | Real-time status, rate-limit, and token usage bar panel for AI coding assistants (Claude Code, OpenAI Codex, GitHub Copilot, Grok, Antigravity). |
+| **[`nertwork/omarchy-network-info`](https://github.com/nertwork/omarchy-network-info)** | `nertwork.network-info` | Unified network intelligence, public/LAN IP telemetry, Wi-Fi RSSI, and live interface bandwidth monitor for `omarchy-shell`. |
+| **[`nertwork/omarchy-battery-health`](https://github.com/nertwork/omarchy-battery-health)** | `nertwork.power` | Battery health diagnostics, 80% charge threshold limiting, and real-time power draw analytics for Omarchy laptops. |
+| **[`nertwork/omarchy-drawer`](https://github.com/nertwork/omarchy-drawer)** | `nertwork.drawer` | Foldable status bar drawer container for Omarchy widgets with smooth expand/collapse animations. |
+
+---
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
