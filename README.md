@@ -1,5 +1,7 @@
 # Bar Drawer for Omarchy
 
+[![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/nertwork/omarchy-drawer?utm_source=oss&utm_medium=github&utm_campaign=nertwork%2Fomarchy-drawer&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)](https://coderabbit.ai)
+
 A polished, native Omarchy status bar container widget that neatly folds secondary or infrequently used status widgets into a compact, animated drawer.
 
 <p align="center">
