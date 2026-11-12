@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: "3.12"
 
       - name: Shell Script Syntax Validation
         run: |
@@ -49,15 +49,12 @@ jobs:
       - name: QML Component Verification
         run: |
           echo "Verifying QML components..."
-          python3 -c "
-          import glob, os
-          qmls = glob.glob("*.qml")
-          for q in qmls:
-              assert os.path.getsize(q) > 0, f"Empty QML file: {q}"
-              content = open(q).read()
-              assert "import " in content, f"{q} missing import statement"
-              print(f"Verified {q} ({os.path.getsize(q)} bytes)")
-          "
+          for q in *.qml; do
+            [ -f "$q" ] || continue
+            [ -s "$q" ] || { echo "Empty QML file: $q"; exit 1; }
+            grep -q "import " "$q" || { echo "Missing import in $q"; exit 1; }
+            echo "Verified $q ($(wc -c < "$q") bytes)"
+          done
 
       - name: Zero-PII & Secret Audit
         run: |
