@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint, Syntax & Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Shell Script Syntax Validation
+        run: |
+          echo "Validating shell scripts..."
+          find . -name "*.sh" -o -path "./bin/*" | while read -r f; do
+            if [ -f "$f" ] && head -n 1 "$f" | grep -qE "^#!/(bin|usr/bin)/(bash|sh|env bash)"; then
+              echo "Checking $f..."
+              bash -n "$f"
+            fi
+          done
+
+      - name: Python Syntax Compilation
+        run: |
+          echo "Compiling Python scripts..."
+          python3 -m compileall -q .
+
+      - name: JSON Manifest Validation
+        run: |
+          echo "Validating JSON files..."
+          find . -maxdepth 2 -name "*.json" | while read -r jf; do
+            echo "Checking $jf..."
+            python3 -m json.tool "$jf" > /dev/null
+          done
+
+      - name: QML Component Verification
+        run: |
+          echo "Verifying QML components..."
+          python3 -c "
+          import glob, os
+          qmls = glob.glob("*.qml")
+          for q in qmls:
+              assert os.path.getsize(q) > 0, f"Empty QML file: {q}"
+              content = open(q).read()
+              assert "import " in content, f"{q} missing import statement"
+              print(f"Verified {q} ({os.path.getsize(q)} bytes)")
+          "
+
+      - name: Zero-PII & Secret Audit
+        run: |
+          echo "Scanning for sensitive tokens or private keys..."
+          ! grep -rnE "BEGIN [A-Z]+ PRIVATE KEY|gh[pousr]_[A-Za-z0-9_]{36,}|AKIA[0-9A-Z]{16}" --exclude-dir=".git" .
